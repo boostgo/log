@@ -1,50 +1,63 @@
+// Package log is wrap over zerolog library.
+// Features:
+// - Setting trace_id key from provided context.
+// - Fatal level log calls global context cancel (not panic or os.Exit()).
+// - Printing errorx.Error.
+// - More key-value pairs.
 package log
 
 import (
 	"context"
+
+	"github.com/boostgo/appx"
 	"github.com/boostgo/log/logx"
 )
 
 // Debug print log on debug level.
 //
 // Provided context use trace id
-func Debug(ctx ...context.Context) Event {
+func Debug() Event {
 	l := logx.Logger()
-	return newEvent(l.Debug(), ctx...)
+	e := logx.Extractor()
+	return newEvent(l.Debug(), e)
 }
 
 // Info print log on info level.
 //
 // Provided context use trace id
-func Info(ctx ...context.Context) Event {
+func Info() Event {
 	l := logx.Logger()
-	return newEvent(l.Info(), ctx...)
+	e := logx.Extractor()
+	return newEvent(l.Info(), e)
 }
 
 // Warn print log on warning level.
 //
 // Provided context use trace id
-func Warn(ctx ...context.Context) Event {
+func Warn() Event {
 	l := logx.Logger()
-	return newEvent(l.Warn(), ctx...)
+	e := logx.Extractor()
+	return newEvent(l.Warn(), e)
 }
 
 // Error print log on error level.
 //
 // Provided context use trace id
-func Error(ctx ...context.Context) Event {
+func Error() Event {
 	l := logx.Logger()
-	return newEvent(l.Error(), ctx...)
+	e := logx.Extractor()
+	return newEvent(l.Error(), e)
 }
 
 // Fatal print log on error level but with bool fatal=true.
 // Provided context use trace id.
 //
 // Call AppCancel function
-func Fatal(ctx ...context.Context) Event {
-	defer logx.Cancel()
+func Fatal() Event {
+	defer appx.Cancel()
 	l := logx.Logger()
-	return newEvent(l.Error().Bool("fatal", true), ctx...)
+	e := logx.Extractor()
+	return newEvent(l.Error().Bool("fatal", true), e)
 }
 
 // Logger is wrap over zerolog logger

@@ -9,14 +9,14 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var (
-	_ctx       context.Context
-	_ctxCancel context.CancelFunc
+type ExtractorFunc func(ctx context.Context, e *zerolog.Event)
 
+var (
 	_pretty bool
 
-	_logger zerolog.Logger
-	_once   sync.Once
+	_logger    zerolog.Logger
+	_once      sync.Once
+	_extractor ExtractorFunc
 )
 
 // Pretty enables logging mode.
@@ -28,18 +28,6 @@ func Pretty() {
 
 func IsPretty() bool {
 	return _pretty
-}
-
-func Cancel() {
-	if _ctxCancel == nil {
-		return
-	}
-
-	_ctxCancel()
-}
-
-func SetCancel(cancel context.CancelFunc) {
-	_ctxCancel = cancel
 }
 
 func InitLogger() {
@@ -70,4 +58,12 @@ func Logger() zerolog.Logger {
 		InitLogger()
 	})
 	return _logger
+}
+
+func SetExtractor(extractor ExtractorFunc) {
+	_extractor = extractor
+}
+
+func Extractor() ExtractorFunc {
+	return _extractor
 }
