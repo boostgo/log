@@ -8,6 +8,7 @@ package log
 
 import (
 	"context"
+	"github.com/rs/zerolog"
 
 	"github.com/boostgo/appx"
 	"github.com/boostgo/log/logx"
@@ -58,6 +59,11 @@ func Fatal() Event {
 	l := logx.Logger()
 	e := logx.Extractor()
 	return newEvent(l.Error().Bool("fatal", true), e)
+}
+
+func With(ctx context.Context) zerolog.Context {
+	l := logx.Logger()
+	return l.With().Ctx(ctx)
 }
 
 // Logger is wrap over zerolog logger
